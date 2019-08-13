@@ -3,22 +3,24 @@ package com.example.demo.model;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "customer_details")
 public class CustomerDetails {
 
     @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name="uuid",strategy="system-uuid")
-    @Column(name = "id")
-    private String id;
-
-    @Column(name = "client_id",nullable = false)
+    @GeneratedValue(generator= "system-uuid")
+    @GenericGenerator(name="system-uuid",strategy = "uuid")
+    @Column(name="client_id")
     private String clientId;
 
     @Column(name = "customer_id",nullable = false,unique = true)
     private String customerId;
+
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name="client_id",referencedColumnName = "client_id")
+    private List<Account> accounts;
 
     @Column(name = "name")
     private String name;
@@ -35,22 +37,14 @@ public class CustomerDetails {
     public CustomerDetails() {
     }
 
-    public CustomerDetails(String id, String clientId, String customerId, String name, String email, String contactNumber, String country) {
-        this.id = id;
+    public CustomerDetails(String clientId, String customerId, List<Account> accounts, String name, String email, String contactNumber, String country) {
         this.clientId = clientId;
         this.customerId = customerId;
+        this.accounts = accounts;
         this.name = name;
         this.email = email;
         this.contactNumber = contactNumber;
         this.country = country;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getClientId() {
@@ -99,5 +93,13 @@ public class CustomerDetails {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public List<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
     }
 }
